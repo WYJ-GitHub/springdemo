@@ -1,0 +1,34 @@
+/*个性化css - zrx*/
+
+/*树形图间距*/
+.ztree li span:not(.span-button) {
+    font-size: 15px;
+}
+
+.ztree li a {
+    vertical-align: sub;
+    padding: 5px;
+}
+
+.ztree li {
+    vertical-align: sub;
+    padding: 5px;
+}
+
+.ztree li span.button.center_docu {
+    background-position: -56px -10px;
+    height: 30px;
+}
+
+.ztree li span.button.bottom_docu {
+    background-position: -56px -30px;
+    height: 30px;
+}
+
+.span-button {
+    margin-left: 10px;
+    color: #279eb7;
+    vertical-align: sub;
+    cursor: pointer;
+    font-size: 14px;
+}

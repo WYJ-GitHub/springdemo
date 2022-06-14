@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="springdemo.dao.AppUserDao">
+
+    <!--添加-->
+	<insert id="add" parameterType="springdemo.entity.AppUserEntity">
+		insert into `app_user`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="nickname != null">
+                nickname,
+            </if>
+            <if test="headImgUrl != null">
+                headImgUrl,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="enabled != null">
+                enabled,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				<if test="id != null">
+					#{id},
+				</if>
+				<if test="username != null">
+					#{username},
+				</if>
+				<if test="password != null">
+					#{password},
+				</if>
+				<if test="nickname != null">
+					#{nickname},
+				</if>
+				<if test="headImgUrl != null">
+					#{headImgUrl},
+				</if>
+				<if test="phone != null">
+					#{phone},
+				</if>
+				<if test="sex != null">
+					#{sex},
+				</if>
+				<if test="enabled != null">
+					#{enabled},
+				</if>
+				<if test="type != null">
+					#{type},
+				</if>
+				<if test="createTime != null">
+					#{createTime},
+				</if>
+				<if test="updateTime != null">
+					#{updateTime},
+				</if>
+		</trim>
+	</insert>
+
+    <!--删除-->
+	<delete id="delete" parameterType="springdemo.entity.AppUserEntity">
+		delete from `app_user`
+		<where>
+            <if test="id != null">
+                and id=#{id}
+            </if>
+            <if test="id == null">
+                and 1 = 0
+            </if>
+            <if test="username != null">
+                and username=#{username}
+            </if>
+            <if test="username == null">
+                and 1 = 0
+            </if>
+		</where>
+	</delete>
+
+    <!--更新-->
+	<update id="update" parameterType="springdemo.entity.AppUserEntity">
+		update `app_user`
+		<trim prefix="set" suffixOverrides=",">
+				<if test="id != null">
+					id=#{id},
+				</if>
+				<if test="username != null">
+					username=#{username},
+				</if>
+				<if test="password != null">
+					password=#{password},
+				</if>
+				<if test="nickname != null">
+					nickname=#{nickname},
+				</if>
+				<if test="headImgUrl != null">
+					headImgUrl=#{headImgUrl},
+				</if>
+				<if test="phone != null">
+					phone=#{phone},
+				</if>
+				<if test="sex != null">
+					sex=#{sex},
+				</if>
+				<if test="enabled != null">
+					enabled=#{enabled},
+				</if>
+				<if test="type != null">
+					type=#{type},
+				</if>
+				<if test="createTime != null">
+					createTime=#{createTime},
+				</if>
+				<if test="updateTime != null">
+					updateTime=#{updateTime},
+				</if>
+		</trim>
+		<where>
+            <if test="id != null">
+                and id=#{id}
+            </if>
+            <if test="id == null">
+                and 1 = 0
+            </if>
+            <if test="username != null">
+                and username=#{username}
+            </if>
+            <if test="username == null">
+                and 1 = 0
+            </if>
+		</where>
+	</update>
+
+    <!--固定条件查询-->
+	<select id="select" parameterType="springdemo.entity.AppUserEntity"
+		resultType="springdemo.entity.AppUserEntity">
+			select
+				id as "id",
+				username as "username",
+				password as "password",
+				nickname as "nickname",
+				headImgUrl as "headImgUrl",
+				phone as "phone",
+				sex as "sex",
+				enabled as "enabled",
+				type as "type",
+				createTime as "createTime",
+				updateTime as "updateTime"
+			from `app_user`
+			<where>
+					<if test="id != null">
+						and id=#{id}
+					</if>
+					<if test="username != null">
+						and username=#{username}
+					</if>
+					<if test="password != null">
+						and password=#{password}
+					</if>
+					<if test="nickname != null">
+						and nickname=#{nickname}
+					</if>
+					<if test="headImgUrl != null">
+						and headImgUrl=#{headImgUrl}
+					</if>
+					<if test="phone != null">
+						and phone=#{phone}
+					</if>
+					<if test="sex != null">
+						and sex=#{sex}
+					</if>
+					<if test="enabled != null">
+						and enabled=#{enabled}
+					</if>
+					<if test="type != null">
+						and type=#{type}
+					</if>
+					<if test="createTime != null">
+						and createTime=#{createTime}
+					</if>
+					<if test="updateTime != null">
+						and updateTime=#{updateTime}
+					</if>
+			</where>
+			<if test="orderStr != '' and orderStr != null">
+				order by ${orderStr}
+			</if>
+            <if test="start != null and pageSize != null">
+                limit #{start},#{pageSize}
+            </if>
+
+
+	</select>
+
+    <!--分页（模糊查询的公共条件）-->
+    <sql id="likeSelectConditions">
+                <if test="id != null and id != '' ">
+                and id <![CDATA[=]]> #{id}
+                </if>
+                <if test="username != null and username != '' ">
+                and username <![CDATA[=]]> #{username}
+                </if>
+                <if test="password != null and password != '' ">
+                and password <![CDATA[=]]> #{password}
+                </if>
+    </sql>
+
+    <!--分页（模糊）查询-->
+	<select id="likeSelect" parameterType="springdemo.entity.AppUserEntity"
+		resultType="springdemo.entity.AppUserEntity">
+			select
+				id as "id",
+				username as "username",
+				password as "password",
+				nickname as "nickname",
+				headImgUrl as "headImgUrl",
+				phone as "phone",
+				sex as "sex",
+				enabled as "enabled",
+				type as "type",
+				createTime as "createTime",
+				updateTime as "updateTime"
+
+                from `app_user`
+
+			<where>
+                <include refid="likeSelectConditions"/>
+			</where>
+			<if test="orderStr != '' and orderStr != null">
+				order by ${orderStr}
+			</if>
+            <if test="start != null and pageSize != null">
+                limit #{start},#{pageSize}
+            </if>
+
+
+	</select>
+
+    <!--分页（模糊）查询条数-->
+	<select id="likeSelectCount" parameterType="springdemo.entity.AppUserEntity"
+		resultType="java.lang.Long">
+		select
+			count(1)
+		from `app_user`
+
+		<where>
+            <include refid="likeSelectConditions"/>
+		</where>
+	</select>
+
+</mapper>

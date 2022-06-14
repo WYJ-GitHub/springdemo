@@ -1,0 +1,464 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>springdemo</title>
+            <meta name="keywords" content="">
+            <meta name="description" content="">
+            <link rel="shortcut icon" href="../favicon.ico">
+            <link href="../../css/bootstrap.min-custom.css" rel="stylesheet">
+            <link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+            <link href="../../css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+            <link href="../../css/animate.css" rel="stylesheet">
+            <link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+            <link href="../../css/plugins/pageMe/pageMe.css" rel="stylesheet"/>
+            <link href="../../css/plugins/progressbar/mprogress.css" rel="stylesheet"/>
+            <link href="../../css/plugins/progressbar/style.css" rel="stylesheet"/>
+        </head>
+
+        <body class="gray-bg">
+        <div id="body" >
+            <div class="wrapper wrapper-content animated fadeInRight">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>sys_permission管理模块</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row row-lg">
+                            <div class="clearfix hidden-xs"></div>
+                            <div class="col-sm-12">
+                                <!-- Example Checkbox Select -->
+                                <div class="example-wrap">
+
+                                    <!-- 查询区域 -->
+                                    <div id="queryModel" tagId="queryTag">
+                                                    <input type="text" v-model="id" placeholder="自增id"
+                                                           style="margin-top: 10px"/>&nbsp;
+                                                    <input type="text" v-model="permission" placeholder="权限标识"
+                                                           style="margin-top: 10px"/>&nbsp;
+                                                    <input type="text" v-model="name" placeholder="名称"
+                                                           style="margin-top: 10px"/>&nbsp;
+                                                    <input type="text" v-model="createTime" placeholder="创建时间"
+                                                           style="margin-top: 10px"/>&nbsp;
+                                                    <input type="text" v-model="updateTime" placeholder="修改时间"
+                                                           style="margin-top: 10px"/>&nbsp;
+                                        <button type="button" class="btn btn-primary btn-sm" @click="queryInfo()">查询</button>&nbsp;
+                                        <button type="button" class="btn btn-primary btn-sm" @click="exportExcel()">导出excel</button>
+                                    </div>
+                                    <!-- 查询区域 end-->
+
+                                    <!-- 添加数据区域 -->
+                                    <div style="text-align: right; margin: 8px">
+                                        <button tagId="addTag" type="button" class="btn btn-success btn-sm" onclick="addMsg()" style="margin: 8px">
+                                            添加数据
+                                        </button>
+                                    </div>
+
+                                    <!-- 查询结果表格显示区域 -->
+                                    <div id="newsContent" class="table-responsive" style="overflow: scroll;" v-cloak>
+                                        <table class="table table-hover table-bordered text-nowrap">
+                                            <tr>
+                                                <th>操作</th>
+                                                        <th>自增id</th>
+                                                        <th>权限标识</th>
+                                                        <th>名称</th>
+                                                        <th>创建时间</th>
+                                                        <th>修改时间</th>
+                                            </tr>
+                                            <tbody id="dataTable">
+                                            <tr v-for="data in result">
+                                                <td>
+                                                <span tagId="upTag"><button type="button" class="btn btn-info btn-sm"
+                                                                            @click="upMsg(data.id,'/sysPermission/select')">
+                                                    更新
+                                                </button>&nbsp;</span>
+                                                    <span tagId="delTag"><button type="button" class="btn btn-danger btn-sm"
+                                                                                 @click="delMsg(data.id,'/sysPermission/delete')">
+                                                    删除
+                                                </button>&nbsp;</span>
+                                                </td>
+                                                    <td>{{data.id}}</td>
+                                                    <td>{{data.permission}}</td>
+                                                    <td>{{data.name}}</td>
+                                                    <td>{{data.createTime}}</td>
+                                                    <td>{{data.updateTime}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <div id="pageID" class="page_div"></div>
+                                    </div>
+                                    <!-- 查询结果表格显示区域 end-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 修改模态框 -->
+            <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="updateModalLabel">修改信息</h4>
+                        </div>
+                        <div class="modal-body" id="updateModalBody">
+                            <form>
+                                        <div class="form-group">
+                                            <label for="id-attr" class="control-label">自增id:</label>
+                                            <input type="text" class="form-control" id="id-attr"
+                                                   v-model="id"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="permission-attr" class="control-label">权限标识:</label>
+                                            <input type="text" class="form-control" id="permission-attr"
+                                                   v-model="permission"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="name-attr" class="control-label">名称:</label>
+                                            <input type="text" class="form-control" id="name-attr"
+                                                   v-model="name"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="createTime-attr" class="control-label">创建时间:</label>
+                                            <input type="text" class="form-control" id="createTime-attr"
+                                                   v-model="createTime"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateTime-attr" class="control-label">修改时间:</label>
+                                            <input type="text" class="form-control" id="updateTime-attr"
+                                                   v-model="updateTime"/>
+                                        </div>
+                                    <div class="form-group">
+                                        <input type="hidden" class="form-control" id="id-attr"
+                                               v-model="id"/>
+                                    </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" @click="confirmUp()">确认</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 添加模态框 -->
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="addModalLabel">添加信息</h4>
+                        </div>
+                        <div class="modal-body" id="addModalBody">
+                            <form>
+                                        <div class="form-group">
+                                            <label for="id-insert" class="control-label">自增id:</label>
+                                            <input type="text" class="form-control" id="id-insert"
+                                                   v-model="id"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="permission-insert" class="control-label">权限标识:</label>
+                                            <input type="text" class="form-control" id="permission-insert"
+                                                   v-model="permission"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="name-insert" class="control-label">名称:</label>
+                                            <input type="text" class="form-control" id="name-insert"
+                                                   v-model="name"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="createTime-insert" class="control-label">创建时间:</label>
+                                            <input type="text" class="form-control" id="createTime-insert"
+                                                   v-model="createTime"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateTime-insert" class="control-label">修改时间:</label>
+                                            <input type="text" class="form-control" id="updateTime-insert"
+                                                   v-model="updateTime"/>
+                                        </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" @click="confirmAdd()">确认</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 全局js -->
+            <script src="../../js/jquery.min.js?v=2.1.4"></script>
+            <script src="../../js/bootstrap.min.js?v=3.3.6"></script>
+
+            <!-- 自定义js -->
+            <script src="../../js/content.js?v=1.0.0"></script>
+
+
+            <!-- Bootstrap table -->
+            <script src="../../js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+            <script src="../../js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+            <script src="../../js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+
+            <!-- Peity -->
+            <!-- <script src="../../js/demo/bootstrap-table-demo.js"></script> -->
+            <script src="../../js/vue/vue.min.js"></script>
+            <script src="../../js/util/ajaxFactory.js"></script>
+            <script src="../../js/util/crudVueFactory.js"></script>
+            <script src="../../js/util/pageMe.js"></script>
+            <script src="../../js/config/config.js"></script>
+            <script src="../../js/plugins/layer/layer.min.js"></script>
+            <script src="../../js/plugins/progressbar/init-mprogress.js"></script>
+            <script src="../../js/plugins/progressbar/mprogress.js"></script>
+
+            <script>
+                var currentPage = 1;
+                var totalPage;
+                var sqlMap = {};
+                //排序的数据
+                var orderData = [];
+                var controllerPrefix = "sysPermission";
+                var methodName = "likeSelect";
+
+                var queryVue = new Vue({
+                    el: '#queryModel',
+                    data: {
+                id :
+                '',
+                permission :
+                '',
+                name :
+                '',
+                createTime :
+                '',
+                updateTime :
+                ''                },
+                methods : {
+                    queryInfo : function () {
+                        sqlMap = {};
+                        sqlMap.id = this.id;
+                        sqlMap.permission = this.permission;
+                        sqlMap.name = this.name;
+                        sqlMap.createTime = this.createTime;
+                        sqlMap.updateTime = this.updateTime;
+                        currentPage = 1;
+                        orderData = [];
+                        $crud.getDataByCurrentPage();
+                    }
+                ,
+                    exportExcel : function () {
+
+                        //显示进度条
+                        InitMprogress();
+
+                        var param = '';
+
+                        for (var key in sqlMap) {
+                            if (sqlMap[key] != '') {
+                                param += key + "=" + sqlMap[key] + "&";
+                            }
+                        }
+
+                        window.location.href = basePath + "/" + controllerPrefix
+                            + "/exportExcel?" + param;
+                        // 进度条消失
+                        setTimeout("MprogressEnd()", totalPage / 20 * 1000);
+                    }
+                }
+
+                })
+                ;
+
+                function makeResult(data) {
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i] == null) {
+                            data[i] = {};
+                            data[i]["id"] = "无";
+                            data[i]["permission"] = "无";
+                            data[i]["name"] = "无";
+                            data[i]["createTime"] = "无";
+                            data[i]["updateTime"] = "无";
+                        }
+                    }
+                }
+
+                var tableVue = new Vue({
+                    el: '#newsContent',
+                    data: {
+                        result: []
+                    },
+                    //created:
+                    mounted: function () {
+                        $crud.getDataByCurrentPage();
+                    },
+                    methods: {
+
+                        upMsg: function (id, path) {
+
+                            $z.ajaxPost({
+                                url: basePath + path,
+                                data: {
+                            id : id
+                        },
+                            success : function (data) {
+                                $z.dealCommonResult(data, function () {
+                                    data = data.data;
+                                    upVue.id = data[0]["id"];
+                                    upVue.id = data[0]["id"];
+                                    upVue.permission = data[0]["permission"];
+                                    upVue.name = data[0]["name"];
+                                    upVue.createTime = data[0]["createTime"];
+                                    upVue.updateTime = data[0]["updateTime"];
+                                    $('#updateModal').modal('show');
+                                });
+                            }
+                        })
+                            ;
+                        },
+                        delMsg: function (id, path) {
+                            layer.confirm("<em style='color:black'>" + '执行删除后将无法恢复，确定继续吗？' + "</em>", {
+                                icon: 3,
+                                offset: "200px",
+                                title: '温馨提示'
+                            }, function (index) {
+                                //do something
+                                $z.ajaxPost({
+                                    url: basePath + path,
+                                    data: {
+                                id : id
+                            },
+                                success: function (data) {
+                                    $z.dealCommonResult(data, function () {
+                                        $crud.getDataByCurrentPage();
+                                        layer.alert("<em style='color:black'>" + "删除成功！" + "</em>", {
+                                            icon: 6,
+                                            offset: "200px",
+                                            title: '提示'
+                                        });
+                                    });
+                                }
+                            })
+                                ;
+                                layer.close(index);
+                            });
+                        }
+                    }
+                });
+
+                var upVue = new Vue({
+                    el: "#updateModal",
+                    data: {
+                id :
+                '',
+                id :
+                '',
+                permission :
+                '',
+                name :
+                '',
+                createTime :
+                '',
+                updateTime :
+                ''                },
+                methods : {
+                    confirmUp : function () {
+                        $z.ajaxPost({
+                            url: basePath + "/" + controllerPrefix + "/update",
+                            data: {
+                        id :
+                        this.id,
+                        id :
+                        this.id,
+                        permission :
+                        this.permission,
+                        name :
+                        this.name,
+                        createTime :
+                        this.createTime,
+                        updateTime :
+                        this.updateTime                    },
+                        success : function (data) {
+                            $z.dealCommonResult(data, function () {
+                                layer.alert("<em style='color:black'>" + "更新成功！" + "</em>", {
+                                    icon: 6,
+                                    offset: "200px",
+                                    title: '提示'
+                                });
+                                $('#updateModal').modal('hide');
+                                $crud.getDataByCurrentPage();
+                            });
+
+                        }
+                    })
+                        ;
+                    }
+                }
+                })
+                ;
+
+                function addMsg() {
+                    $('#addModal').modal('show');
+                }
+
+                var addVue = new Vue({
+
+                    el: "#addModal",
+                    data: {
+                id :
+                '',
+                permission :
+                '',
+                name :
+                '',
+                createTime :
+                '',
+                updateTime :
+                ''                },
+                methods : {
+                    confirmAdd : function () {
+                        $z.ajaxPost({
+                            url: basePath + "/" + controllerPrefix + "/add",
+                            data: {
+                        id :
+                        this.id,
+                        permission :
+                        this.permission,
+                        name :
+                        this.name,
+                        createTime :
+                        this.createTime,
+                        updateTime :
+                        this.updateTime                    },
+                        success : function (data) {
+                            $z.dealCommonResult(data, function () {
+                                layer.alert("<em style='color:black'>" + "添加成功！" + "</em>", {
+                                    icon: 6,
+                                    offset: "200px",
+                                    title: '提示'
+                                });
+                                $('#addModal').modal('hide');
+                                //初始化
+                                sqlMap = {};
+                                currentPage = 1;
+                                $crud.getDataByCurrentPage();
+                            });
+
+                        }
+                    })
+                        ;
+                    }
+                }
+                })
+                ;
+            </script>
+        </div>
+        </body>
+        </html>

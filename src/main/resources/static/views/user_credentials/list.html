@@ -1,0 +1,410 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>springdemo</title>
+            <meta name="keywords" content="">
+            <meta name="description" content="">
+            <link rel="shortcut icon" href="../favicon.ico">
+            <link href="../../css/bootstrap.min-custom.css" rel="stylesheet">
+            <link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+            <link href="../../css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+            <link href="../../css/animate.css" rel="stylesheet">
+            <link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+            <link href="../../css/plugins/pageMe/pageMe.css" rel="stylesheet"/>
+            <link href="../../css/plugins/progressbar/mprogress.css" rel="stylesheet"/>
+            <link href="../../css/plugins/progressbar/style.css" rel="stylesheet"/>
+        </head>
+
+        <body class="gray-bg">
+        <div id="body" >
+            <div class="wrapper wrapper-content animated fadeInRight">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>user_credentials管理模块</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row row-lg">
+                            <div class="clearfix hidden-xs"></div>
+                            <div class="col-sm-12">
+                                <!-- Example Checkbox Select -->
+                                <div class="example-wrap">
+
+                                    <!-- 查询区域 -->
+                                    <div id="queryModel" tagId="queryTag">
+                                                    <input type="text" v-model="username" placeholder="用户名或手机号等"
+                                                           style="margin-top: 10px"/>&nbsp;
+                                                    <input type="text" v-model="type" placeholder="账号类型（用户名、手机号）"
+                                                           style="margin-top: 10px"/>&nbsp;
+                                                    <input type="text" v-model="userId" placeholder="用户id"
+                                                           style="margin-top: 10px"/>&nbsp;
+                                        <button type="button" class="btn btn-primary btn-sm" @click="queryInfo()">查询</button>&nbsp;
+                                        <button type="button" class="btn btn-primary btn-sm" @click="exportExcel()">导出excel</button>
+                                    </div>
+                                    <!-- 查询区域 end-->
+
+                                    <!-- 添加数据区域 -->
+                                    <div style="text-align: right; margin: 8px">
+                                        <button tagId="addTag" type="button" class="btn btn-success btn-sm" onclick="addMsg()" style="margin: 8px">
+                                            添加数据
+                                        </button>
+                                    </div>
+
+                                    <!-- 查询结果表格显示区域 -->
+                                    <div id="newsContent" class="table-responsive" style="overflow: scroll;" v-cloak>
+                                        <table class="table table-hover table-bordered text-nowrap">
+                                            <tr>
+                                                <th>操作</th>
+                                                        <th>用户名或手机号等</th>
+                                                        <th>账号类型（用户名、手机号）</th>
+                                                        <th>用户id</th>
+                                            </tr>
+                                            <tbody id="dataTable">
+                                            <tr v-for="data in result">
+                                                <td>
+                                                <span tagId="upTag"><button type="button" class="btn btn-info btn-sm"
+                                                                            @click="upMsg(data.username,'/userCredentials/select')">
+                                                    更新
+                                                </button>&nbsp;</span>
+                                                    <span tagId="delTag"><button type="button" class="btn btn-danger btn-sm"
+                                                                                 @click="delMsg(data.username,'/userCredentials/delete')">
+                                                    删除
+                                                </button>&nbsp;</span>
+                                                </td>
+                                                    <td>{{data.username}}</td>
+                                                    <td>{{data.type}}</td>
+                                                    <td>{{data.userId}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <div id="pageID" class="page_div"></div>
+                                    </div>
+                                    <!-- 查询结果表格显示区域 end-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 修改模态框 -->
+            <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="updateModalLabel">修改信息</h4>
+                        </div>
+                        <div class="modal-body" id="updateModalBody">
+                            <form>
+                                        <div class="form-group">
+                                            <label for="username-attr" class="control-label">用户名或手机号等:</label>
+                                            <input type="text" class="form-control" id="username-attr"
+                                                   v-model="username"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="type-attr" class="control-label">账号类型（用户名、手机号）:</label>
+                                            <input type="text" class="form-control" id="type-attr"
+                                                   v-model="type"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="userId-attr" class="control-label">用户id:</label>
+                                            <input type="text" class="form-control" id="userId-attr"
+                                                   v-model="userId"/>
+                                        </div>
+                                    <div class="form-group">
+                                        <input type="hidden" class="form-control" id="username-attr"
+                                               v-model="username"/>
+                                    </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" @click="confirmUp()">确认</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 添加模态框 -->
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="addModalLabel">添加信息</h4>
+                        </div>
+                        <div class="modal-body" id="addModalBody">
+                            <form>
+                                        <div class="form-group">
+                                            <label for="username-insert" class="control-label">用户名或手机号等:</label>
+                                            <input type="text" class="form-control" id="username-insert"
+                                                   v-model="username"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="type-insert" class="control-label">账号类型（用户名、手机号）:</label>
+                                            <input type="text" class="form-control" id="type-insert"
+                                                   v-model="type"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="userId-insert" class="control-label">用户id:</label>
+                                            <input type="text" class="form-control" id="userId-insert"
+                                                   v-model="userId"/>
+                                        </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" @click="confirmAdd()">确认</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 全局js -->
+            <script src="../../js/jquery.min.js?v=2.1.4"></script>
+            <script src="../../js/bootstrap.min.js?v=3.3.6"></script>
+
+            <!-- 自定义js -->
+            <script src="../../js/content.js?v=1.0.0"></script>
+
+
+            <!-- Bootstrap table -->
+            <script src="../../js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+            <script src="../../js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+            <script src="../../js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+
+            <!-- Peity -->
+            <!-- <script src="../../js/demo/bootstrap-table-demo.js"></script> -->
+            <script src="../../js/vue/vue.min.js"></script>
+            <script src="../../js/util/ajaxFactory.js"></script>
+            <script src="../../js/util/crudVueFactory.js"></script>
+            <script src="../../js/util/pageMe.js"></script>
+            <script src="../../js/config/config.js"></script>
+            <script src="../../js/plugins/layer/layer.min.js"></script>
+            <script src="../../js/plugins/progressbar/init-mprogress.js"></script>
+            <script src="../../js/plugins/progressbar/mprogress.js"></script>
+
+            <script>
+                var currentPage = 1;
+                var totalPage;
+                var sqlMap = {};
+                //排序的数据
+                var orderData = [];
+                var controllerPrefix = "userCredentials";
+                var methodName = "likeSelect";
+
+                var queryVue = new Vue({
+                    el: '#queryModel',
+                    data: {
+                username :
+                '',
+                type :
+                '',
+                userId :
+                ''                },
+                methods : {
+                    queryInfo : function () {
+                        sqlMap = {};
+                        sqlMap.username = this.username;
+                        sqlMap.type = this.type;
+                        sqlMap.userId = this.userId;
+                        currentPage = 1;
+                        orderData = [];
+                        $crud.getDataByCurrentPage();
+                    }
+                ,
+                    exportExcel : function () {
+
+                        //显示进度条
+                        InitMprogress();
+
+                        var param = '';
+
+                        for (var key in sqlMap) {
+                            if (sqlMap[key] != '') {
+                                param += key + "=" + sqlMap[key] + "&";
+                            }
+                        }
+
+                        window.location.href = basePath + "/" + controllerPrefix
+                            + "/exportExcel?" + param;
+                        // 进度条消失
+                        setTimeout("MprogressEnd()", totalPage / 20 * 1000);
+                    }
+                }
+
+                })
+                ;
+
+                function makeResult(data) {
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i] == null) {
+                            data[i] = {};
+                            data[i]["username"] = "无";
+                            data[i]["type"] = "无";
+                            data[i]["userId"] = "无";
+                        }
+                    }
+                }
+
+                var tableVue = new Vue({
+                    el: '#newsContent',
+                    data: {
+                        result: []
+                    },
+                    //created:
+                    mounted: function () {
+                        $crud.getDataByCurrentPage();
+                    },
+                    methods: {
+
+                        upMsg: function (username, path) {
+
+                            $z.ajaxPost({
+                                url: basePath + path,
+                                data: {
+                            username : username
+                        },
+                            success : function (data) {
+                                $z.dealCommonResult(data, function () {
+                                    data = data.data;
+                                    upVue.username = data[0]["username"];
+                                    upVue.username = data[0]["username"];
+                                    upVue.type = data[0]["type"];
+                                    upVue.userId = data[0]["userId"];
+                                    $('#updateModal').modal('show');
+                                });
+                            }
+                        })
+                            ;
+                        },
+                        delMsg: function (username, path) {
+                            layer.confirm("<em style='color:black'>" + '执行删除后将无法恢复，确定继续吗？' + "</em>", {
+                                icon: 3,
+                                offset: "200px",
+                                title: '温馨提示'
+                            }, function (index) {
+                                //do something
+                                $z.ajaxPost({
+                                    url: basePath + path,
+                                    data: {
+                                username : username
+                            },
+                                success: function (data) {
+                                    $z.dealCommonResult(data, function () {
+                                        $crud.getDataByCurrentPage();
+                                        layer.alert("<em style='color:black'>" + "删除成功！" + "</em>", {
+                                            icon: 6,
+                                            offset: "200px",
+                                            title: '提示'
+                                        });
+                                    });
+                                }
+                            })
+                                ;
+                                layer.close(index);
+                            });
+                        }
+                    }
+                });
+
+                var upVue = new Vue({
+                    el: "#updateModal",
+                    data: {
+                username :
+                '',
+                username :
+                '',
+                type :
+                '',
+                userId :
+                ''                },
+                methods : {
+                    confirmUp : function () {
+                        $z.ajaxPost({
+                            url: basePath + "/" + controllerPrefix + "/update",
+                            data: {
+                        username :
+                        this.username,
+                        username :
+                        this.username,
+                        type :
+                        this.type,
+                        userId :
+                        this.userId                    },
+                        success : function (data) {
+                            $z.dealCommonResult(data, function () {
+                                layer.alert("<em style='color:black'>" + "更新成功！" + "</em>", {
+                                    icon: 6,
+                                    offset: "200px",
+                                    title: '提示'
+                                });
+                                $('#updateModal').modal('hide');
+                                $crud.getDataByCurrentPage();
+                            });
+
+                        }
+                    })
+                        ;
+                    }
+                }
+                })
+                ;
+
+                function addMsg() {
+                    $('#addModal').modal('show');
+                }
+
+                var addVue = new Vue({
+
+                    el: "#addModal",
+                    data: {
+                username :
+                '',
+                type :
+                '',
+                userId :
+                ''                },
+                methods : {
+                    confirmAdd : function () {
+                        $z.ajaxPost({
+                            url: basePath + "/" + controllerPrefix + "/add",
+                            data: {
+                        username :
+                        this.username,
+                        type :
+                        this.type,
+                        userId :
+                        this.userId                    },
+                        success : function (data) {
+                            $z.dealCommonResult(data, function () {
+                                layer.alert("<em style='color:black'>" + "添加成功！" + "</em>", {
+                                    icon: 6,
+                                    offset: "200px",
+                                    title: '提示'
+                                });
+                                $('#addModal').modal('hide');
+                                //初始化
+                                sqlMap = {};
+                                currentPage = 1;
+                                $crud.getDataByCurrentPage();
+                            });
+
+                        }
+                    })
+                        ;
+                    }
+                }
+                })
+                ;
+            </script>
+        </div>
+        </body>
+        </html>

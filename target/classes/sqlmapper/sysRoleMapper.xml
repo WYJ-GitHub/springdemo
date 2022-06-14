@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="springdemo.dao.SysRoleDao">
+
+    <!--添加-->
+	<insert id="add" parameterType="springdemo.entity.SysRoleEntity">
+		insert into `sys_role`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				<if test="id != null">
+					#{id},
+				</if>
+				<if test="code != null">
+					#{code},
+				</if>
+				<if test="name != null">
+					#{name},
+				</if>
+				<if test="createTime != null">
+					#{createTime},
+				</if>
+				<if test="updateTime != null">
+					#{updateTime},
+				</if>
+		</trim>
+	</insert>
+
+    <!--删除-->
+	<delete id="delete" parameterType="springdemo.entity.SysRoleEntity">
+		delete from `sys_role`
+		<where>
+            <if test="id != null">
+                and id=#{id}
+            </if>
+            <if test="id == null">
+                and 1 = 0
+            </if>
+		</where>
+	</delete>
+
+    <!--更新-->
+	<update id="update" parameterType="springdemo.entity.SysRoleEntity">
+		update `sys_role`
+		<trim prefix="set" suffixOverrides=",">
+				<if test="id != null">
+					id=#{id},
+				</if>
+				<if test="code != null">
+					code=#{code},
+				</if>
+				<if test="name != null">
+					name=#{name},
+				</if>
+				<if test="createTime != null">
+					createTime=#{createTime},
+				</if>
+				<if test="updateTime != null">
+					updateTime=#{updateTime},
+				</if>
+		</trim>
+		<where>
+            <if test="id != null">
+                and id=#{id}
+            </if>
+            <if test="id == null">
+                and 1 = 0
+            </if>
+		</where>
+	</update>
+
+    <!--固定条件查询-->
+	<select id="select" parameterType="springdemo.entity.SysRoleEntity"
+		resultType="springdemo.entity.SysRoleEntity">
+			select
+				id as "id",
+				code as "code",
+				name as "name",
+				createTime as "createTime",
+				updateTime as "updateTime"
+			from `sys_role`
+			<where>
+					<if test="id != null">
+						and id=#{id}
+					</if>
+					<if test="code != null">
+						and code=#{code}
+					</if>
+					<if test="name != null">
+						and name=#{name}
+					</if>
+					<if test="createTime != null">
+						and createTime=#{createTime}
+					</if>
+					<if test="updateTime != null">
+						and updateTime=#{updateTime}
+					</if>
+			</where>
+			<if test="orderStr != '' and orderStr != null">
+				order by ${orderStr}
+			</if>
+            <if test="start != null and pageSize != null">
+                limit #{start},#{pageSize}
+            </if>
+
+
+	</select>
+
+    <!--分页（模糊查询的公共条件）-->
+    <sql id="likeSelectConditions">
+                <if test="id != null and id != '' ">
+                and id <![CDATA[=]]> #{id}
+                </if>
+                <if test="code != null and code != '' ">
+                and code <![CDATA[=]]> #{code}
+                </if>
+                <if test="name != null and name != '' ">
+                and name <![CDATA[=]]> #{name}
+                </if>
+                <if test="createTime != null and createTime != '' ">
+                and createTime <![CDATA[=]]> #{createTime}
+                </if>
+                <if test="updateTime != null and updateTime != '' ">
+                and updateTime <![CDATA[=]]> #{updateTime}
+                </if>
+    </sql>
+
+    <!--分页（模糊）查询-->
+	<select id="likeSelect" parameterType="springdemo.entity.SysRoleEntity"
+		resultType="springdemo.entity.SysRoleEntity">
+			select
+				id as "id",
+				code as "code",
+				name as "name",
+				createTime as "createTime",
+				updateTime as "updateTime"
+
+                from `sys_role`
+
+			<where>
+                <include refid="likeSelectConditions"/>
+			</where>
+			<if test="orderStr != '' and orderStr != null">
+				order by ${orderStr}
+			</if>
+            <if test="start != null and pageSize != null">
+                limit #{start},#{pageSize}
+            </if>
+
+
+	</select>
+
+    <!--分页（模糊）查询条数-->
+	<select id="likeSelectCount" parameterType="springdemo.entity.SysRoleEntity"
+		resultType="java.lang.Long">
+		select
+			count(1)
+		from `sys_role`
+
+		<where>
+            <include refid="likeSelectConditions"/>
+		</where>
+	</select>
+
+</mapper>
