@@ -43,7 +43,18 @@ public class SelectAppleTestMain {
             }
         };
         AppleFilter appleFilter = new AppleFilter();
-        apples = appleFilter.AppleFilter(apples, appleCondition);
+        /**apples = appleFilter.AppleFilter(apples,  new AppleCondition() {
+            @Override
+            public boolean condition(Apple apple) {
+                if (apple.getColor().equals("red")
+                        && apple.getName().equals("红富士")
+                        && apple.getWeight() > 100) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });*/
         /*
         2. 此种方法不适用，遇见int具有初始值，筛选则走不通
         Apple apple = new Apple();
@@ -52,9 +63,17 @@ public class SelectAppleTestMain {
         AppleFilter appleFilter = new AppleFilter();
         apples = appleFilter.AppleFilter(apples,apple);
          */
+        //3. 使用lambda表达式
+        apples = appleFilter.AppleFilter(apples, (Apple apple) -> {return apple.getColor().equals("red") && apple.getName().equals("红富士");});
         for (Apple a :
                 apples) {
             System.out.println(a.toString());
         }
+
+        /**
+         * 总结：行为参数化是指一个方法要接受多个不同行为作为参数，并在内部使用它们，完成不同行为的能力
+         *
+         */
+
     }
 }
